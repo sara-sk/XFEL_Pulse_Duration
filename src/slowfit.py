@@ -1,16 +1,10 @@
 import sys
-import h5py
-import glob
 import numpy as np 
-from numpy import random
 import matplotlib.pyplot as plt
-from scipy import signal
 import scipy as sp
 from scipy.signal import butter
 from scipy.optimize import curve_fit
-from lmfit.models import GaussianModel
-import time
-import random
+from scipy import signal
 from src.peakfinder import Peakfinder
 from src.slices import Slice
 from src.gauss import Gauss
@@ -45,13 +39,13 @@ class Slow_Fit:
             #if self.height_difference > backloop_condition_slow * max(self.lowpassdata)/100:
             #    lpcutoff = lpcutoff + 0.001
             rd = np.sqrt(r2 / len(photE))
-            print(self.height_difference, rd)
+            
             if rd > p.backloop_condition_slow * max(self.lowpassdata)/100:
                 lpcutoff = lpcutoff + 0.001
             else:
                 break
                 
-        print('lpcutoff: {}'.format(lpcutoff))
+        
         
         # shift spectrum
         self.lpfn = self.spec - min(self.spec)
@@ -86,13 +80,13 @@ class Slow_Fit:
         self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
         
         plt.plot(photE, self.Gaussian, label="Gaussian approximation")
-        print(self.IndivGauss.shape)
+        
         for i in range(self.IndivGauss.shape[0]):
             plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="indiv gaussian")
         plt.plot(photE, self.lpfn, label = "shifted lowpass function")
         plt.plot(photE, lowpassdata, label = "original function")
         
-        print(self.fn2.GetMax_x(),self.fn2.GetMax_y())
+        
         plt.plot(self.fn2.GetMax_x(),self.fn2.GetMax_y(), 'go')
         if self.n != 1:
             plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
