@@ -5,13 +5,13 @@ import scipy as sp
 from scipy.signal import butter
 from scipy.optimize import curve_fit
 from scipy import signal
-from src.peakfinder import Peakfinder
-from src.slices import Slice
-from src.gauss import Gauss
-from src.maxmin import MaxMin
-from src.filterpeaks import Filter_peaks
+from src_visual.peakfinder import Peakfinder
+from src_visual.slices import Slice
+from src_visual.gauss import Gauss
+from src_visual.maxmin import MaxMin
+from src_visual.filterpeaks import Filter_peaks
 
-from src.parameters import Parameters as p
+from src_visual.parameters import Parameters as p
 
 class Slow_Fit:
     def __init__(self, lowpassdata,photE):
@@ -25,10 +25,10 @@ class Slow_Fit:
             self.spec = signal.filtfilt(b, a, self.lowpassdata)
                                   
             # Visual module for chpecking
-            """plt.plot(self.lpfn, label='lowpass')
+            plt.plot(self.lpfn, label='lowpass')
             plt.plot(self.lowpassdata, label='raw data')
             plt.legend()
-            plt.show()"""
+            plt.show()
 
             # condition for good fitting based on vertical distance between maxima of raw and lowpass dataset
             # if not fitted within backloop_condition, increment until good fit
@@ -56,7 +56,7 @@ class Slow_Fit:
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         
-        print(self.peaks)
+        #print(self.peaks)
         
         # Apply further constraints to peaks
         self.filteredpeaks = Filter_peaks(self.peaks).filtered_peaks()

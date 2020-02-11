@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 import scipy as sp
 
-from src.parameters import Parameters as p
+from src_visual.parameters import Parameters as p
 
 class Peakfinder:
     def __init__(self, data, photE):
@@ -20,12 +20,12 @@ class Peakfinder:
         
     def peaks(self):
     # returns dataset with neutral index x and intensity y  
-        """
+        
         # Visual module
         print("Plotting peaks found. Neutrally indexed.")
         plt.plot(self.data, label="data fed to peak finder")
-        plt.plot(self.xpeaks,self.ypeaks,label="peaks",'go')
+        plt.plot(self.xpeaks,self.ypeaks,'go',label="peaks")
         plt.legend()
         plt.show()
-        """
+        
         return self.allpeaks

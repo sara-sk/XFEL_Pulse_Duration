@@ -1,8 +1,10 @@
+# Function finds the maxima and minima of the dataset
+# Class only used in slow fit, as in to plot dots at maxima and minima
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
 
-from src.parameters import Parameters as p
+from src_visual.parameters import Parameters as p
 
 class MaxMin:
     def __init__(self, data, nofpeaks, slicepos, lpfn, photE):

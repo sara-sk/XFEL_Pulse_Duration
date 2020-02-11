@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 
-from src.parameters import Parameters as p
+from src_visual.parameters import Parameters as p
 
 class Slice:
     def __init__(self, data, peaks, nofpeaks):
@@ -60,12 +60,12 @@ class Slice:
                     single_slice = np.append(single_slice, 0)
                 #self.Slices = np.vstack((self.Slices,single_slice))
                 self.Slices.append(single_slice)
-            """
+            
             # Visual module
             print("plotting single slices")
             plt.plot(single_slice)
             plt.show()
-            """
+            
                 
         self.Slices = np.array(self.Slices)
         

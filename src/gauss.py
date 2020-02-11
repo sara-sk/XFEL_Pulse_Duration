@@ -1,10 +1,12 @@
+# Class takes individual slices and approximates Gaussians to them
+# Returns individual Gaussians and total added Gaussian
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
 import scipy as sp
 from lmfit.models import GaussianModel
 
-from src.parameters import Parameters as p
+from src_visual.parameters import Parameters as p
 
 class Gauss:
     def __init__(self, data, n):
@@ -13,16 +15,16 @@ class Gauss:
         self.n = n
         self.gaussResults = []
         
-        '''
+        
         if self.n == 1:
             peak = self.data
             mod = GaussianModel()
-            pars = mod.guess(peak, x = x)
-            out = mod.fit(peak, pars, x= x)
+            pars = mod.guess(peak, x = p.x)
+            out = mod.fit(peak, pars, x= p.x)
             gaussResult = out.best_fit
             self.gaussResults.append(gaussResult)
             self.sigmas.append(out.params['sigma'].value)
-        '''
+        
         if False:
             pass
         
