@@ -1,3 +1,5 @@
+# Function finds the maxima and minima of the dataset
+# Class only used in slow fit, as in to plot dots at maxima and minima
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -33,7 +35,7 @@ class MaxMin:
                 if i == 0:
                     i1 = int(0)
                     i2 = int(len(self.lpfn)) if self.n == 1 else int(self.slicepos[i])
-                    print('Finding first minmax within {},{}'.format(i1, i2))
+                    #print('Finding first minmax within {},{}'.format(i1, i2))
                     ymax = max(self.lpfn[i1:i2])
                     xmax = np.where(self.lpfn == ymax)
 

@@ -56,7 +56,7 @@ class Slow_Fit:
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         
-        print(self.peaks)
+        #print(self.peaks)
         
         # Apply further constraints to peaks
         self.filteredpeaks = Filter_peaks(self.peaks).filtered_peaks()
@@ -79,7 +79,7 @@ class Slow_Fit:
         
         self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
         
-        plt.plot(photE, self.Gaussian, label="Gaussian approximation")
+        '''plt.plot(photE, self.Gaussian, label="Gaussian approximation")
         
         for i in range(self.IndivGauss.shape[0]):
             plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="indiv gaussian")
@@ -91,7 +91,7 @@ class Slow_Fit:
         if self.n != 1:
             plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
         plt.legend()
-        plt.show()
+        plt.show()'''
         
         minima = fn.SlicingPoints()
         self.u = 0

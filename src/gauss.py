@@ -1,3 +1,5 @@
+# Class takes individual slices and approximates Gaussians to them
+# Returns individual Gaussians and total added Gaussian
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
