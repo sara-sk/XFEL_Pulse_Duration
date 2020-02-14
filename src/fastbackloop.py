@@ -9,12 +9,11 @@ import random
 
 from src.parameters import Parameters as k
 
-
-# Trialling lowpass function for random spectra to find optimal cutoff
-# Indexed neutrally (i.e. not by energy)
-
-# This is a simple backloop, which takes into account only height difference of dataset maxima. It assumes a low cutoff, and increases this until fit seems appropriate.
-# Should the cutoff found give rise to overfitting, send through slow fit for which backloop also takes into account overfitting.
+#############
+# CLASS NO LONGER NECESSARY - CUTOFF ADAPTED IN SLOWFIT
+# Originally written to find a lowpass cutoff applicable to a whole dataset
+# Increases cutoff until lowpass condition is satisfied
+#############
 
 class Fast_Backloop:
     def __init__(self, intense):
@@ -52,7 +51,7 @@ class Fast_Backloop:
         
         # Finding average of cutoffs to 4 decimal points
         self.avg_cutoff = "%.4f" % np.average(cutoffs)
-        print("Average cutoff for dataset:", self.avg_cutoff)
+       # print("Average cutoff for dataset:", self.avg_cutoff)
         return None
     # cutoff fed to fastfit function
     def cutoff(self):

@@ -1,10 +1,11 @@
-# Function finds the maxima and minima of the dataset
-# Class only used in slow fit, as in to plot dots at maxima and minima
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
 
 from src.parameters import Parameters as p
+
+# Class for extracting local minima and maxima of lowpass functions based on found peaks
+# Use only for visual demonstration
 
 class MaxMin:
     def __init__(self, data, nofpeaks, slicepos, lpfn, photE):
@@ -13,12 +14,11 @@ class MaxMin:
         self.slicepos = slicepos
         self.lpfn = lpfn
         
-        #if self.n == 1:
-        #    self.ymax = max(self.data)
-        #    self.xmax = np.where(self.data == self.ymax)
         if False:
             pass
+
         else:
+            # Find local minima from slicing positions
             self.ymin = []
             self.xmin = []
             for j in range(len(slicepos)):
@@ -28,9 +28,12 @@ class MaxMin:
 
                 xmin = photE[self.slicepos[j]]
                 self.xmin = np.append(self.xmin, xmin)
-                
+            
+            # Find local maxima between local minima (in Gaussian), matching to lowpass function
             self.ymax = []
             self.xmax = []
+
+            # Define indices differently for edge peaks
             for i in range(self.n):
                 if i == 0:
                     i1 = int(0)

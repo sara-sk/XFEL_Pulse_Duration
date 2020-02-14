@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from src.parameters import Parameters as p
+
 # Plots the average spectrum of entire dataset
 class Avg_Spectrum:
     def __init__(self, data, photE):
