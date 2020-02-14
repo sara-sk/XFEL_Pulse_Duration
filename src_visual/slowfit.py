@@ -23,7 +23,7 @@ class Slow_Fit:
         # Fitting lowpass function, adjusting for both r2 value between points and for smoothness
         # Starting with ultra-low cutoff.
         lpcutoff = 0.0001
-
+        print("Fitting lowpass function")
         while True:
             # fitting lowpass function
             b, a = signal.butter(p.deg, lpcutoff, 'low')
