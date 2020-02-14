@@ -1,3 +1,4 @@
+# CLASS NO LONGER IN USE, SLOWFIT FUNCTION SUFFICIENT
 # Main fast fit function, linearly takes the data through other classes to eventually output the desired data
 
 import sys

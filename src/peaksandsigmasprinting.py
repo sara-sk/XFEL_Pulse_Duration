@@ -6,7 +6,7 @@ from src.parameters import Parameters as p
 # Both average and number of spectra are indexed by number of spikes in spectra
 # i.e. single-peak spectra counted into index 1, double peak to index 2 etc.
 
-class Peaks_and_Sigmas:
+class Peaks_and_Sigmas_Printing:
     def __init__(self, number_of_peaks, avgsigma, photE, intense, array):
         self.corr = (max(photE)-min(photE))/len(intense[1,:])
         self.number_of_peaks = number_of_peaks
@@ -49,8 +49,8 @@ class Peaks_and_Sigmas:
         
         self.overall_average = np.sum(weighted_avg)
         
-        ##iprint("Average sigma for all input spectra:", self.overall_average)
-       ## print("Number of spectra:", self.spectra)
+        print("Average sigma for all input spectra:", self.overall_average)
+        print("Number of spectra:", self.spectra)
         
     # Stacks arrays to return one dataset with all data
     def Returns(self):
@@ -59,3 +59,4 @@ class Peaks_and_Sigmas:
         return self.spectra
     def Overall_Average(self):
         return self.overall_average
+
