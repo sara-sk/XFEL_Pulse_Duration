@@ -1,3 +1,6 @@
+# CLASS NO LONGER IN USE, SLOWFIT FUNCTION SUFFICIENT
+# Main fast fit function, linearly takes the data through other classes to eventually output the desired data
+
 import sys
 import glob
 import numpy as np 
@@ -8,7 +11,6 @@ import scipy as sp
 from scipy.signal import butter
 from scipy.optimize import curve_fit
 
-
 from src.peakfinder import Peakfinder
 from src.filterpeaks import Filter_peaks
 from src.gauss import Gauss
@@ -17,7 +19,10 @@ from src.parameters import Parameters as p
 
 class Fast_Fit:
     def __init__(self, lowpassdata, deg, cutoff, photE):
+
+        # Cutoff comes from fast backkloop class, executed in main function
         self.cutoff = float(cutoff)
+
         # lowpass function itself
         self.lowpassdata = lowpassdata
         b, a = signal.butter(deg, self.cutoff, 'low')
@@ -71,12 +76,17 @@ class Fast_Fit:
         #"""
         
         minima = fn.SlicingPoints()
+
+        # Finds significant overlap
+        # Returns self.u = 1 if that is the case
+        # Can use this object in case we want to put overlapping spectra through slow fit
         self.u = 0
         for i in range(len(minima)):
             index = int(minima[i])
             if (abs(self.Gaussian[index]-self.lpfn[index])*100/max(self.lpfn)) > p.threshold and self.u == 0:
                 self.u = self.u + 1
-                
+          
+        # Returns average sigma of all peaks in spectra  
         sig = self.fn1.sigmas
         self.sig = np.array((np.average(sig)))
                 

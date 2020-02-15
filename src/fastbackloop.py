@@ -9,12 +9,11 @@ import random
 
 from src.parameters import Parameters as k
 
-
-# Trialling lowpass function for random spectra to find optimal cutoff
-# Indexed neutrally (i.e. not by energy)
-
-# Potential upgrades: fit also "from above" -> i.e. take into account overfitting. Eg by max threshold of peaks
-# Could also incorporate backloop into slowfit!
+#############
+# CLASS NO LONGER NECESSARY - CUTOFF ADAPTED IN SLOWFIT
+# Originally written to find a lowpass cutoff applicable to a whole dataset
+# Increases cutoff until lowpass condition is satisfied
+#############
 
 class Fast_Backloop:
     def __init__(self, intense):
@@ -24,10 +23,9 @@ class Fast_Backloop:
 
             p = random.randrange(0, len(intense[:,1]), 1) # finding random spectrum to use
             
-            print ("Trialled for spectrum", p)
             
             self.lowpassdata = intense[p,:]
-            lpcutoff = 0.001                         # this constant seems low enough - reconsider if not applicable to all datasets
+            lpcutoff = 0.001                         # starting at low cutoff (a sure underfit)
             n = 0
 
             while True:
@@ -45,7 +43,7 @@ class Fast_Backloop:
                 # if not fitted within backloop_condition, increment until good fit
                 self.height_difference = abs(max(self.lowpassdata) - max(self.lpfn))
                 if self.height_difference > k.backloop_condition * max(self.lowpassdata)/100:
-                    lpcutoff = lpcutoff + 0.005
+                    lpcutoff = lpcutoff + 0.005                                                     # arbitrarily chosen increment - high enough for efficiency
                 else:
                     break
 
@@ -53,7 +51,8 @@ class Fast_Backloop:
         
         # Finding average of cutoffs to 4 decimal points
         self.avg_cutoff = "%.4f" % np.average(cutoffs)
-        print("Average cutoff for dataset:", self.avg_cutoff)
+       # print("Average cutoff for dataset:", self.avg_cutoff)
         return None
+    # cutoff fed to fastfit function
     def cutoff(self):
         return self.avg_cutoff
