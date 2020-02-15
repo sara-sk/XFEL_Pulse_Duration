@@ -1,4 +1,3 @@
-# helps fast_fit return peaks
 import sys
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -6,6 +5,10 @@ from scipy import signal
 import scipy as sp
 
 from src.parameters import Parameters as p
+
+# Peakfinding class builds on Scipy Peakfinder
+# Conditions defined in Parameter class
+# Returns dataset with x- and y- coordinates of peaks
 
 class Peakfinder:
     def __init__(self, data, photE):

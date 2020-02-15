@@ -6,28 +6,21 @@ from lmfit.models import GaussianModel
 
 from src.parameters import Parameters as p
 
+# Class for approximating Gaussian functions to individual slices
+
 class Gauss:
     def __init__(self, data, n):
-        self.data = data
+        self.data = data        # stacked individual slices
         self.sigmas = []
-        self.n = n
+        self.n = n              # number of peaks
         self.gaussResults = []
         
-        '''
-        if self.n == 1:
-            peak = self.data
-            mod = GaussianModel()
-            pars = mod.guess(peak, x = x)
-            out = mod.fit(peak, pars, x= x)
-            gaussResult = out.best_fit
-            self.gaussResults.append(gaussResult)
-            self.sigmas.append(out.params['sigma'].value)
-        '''
         if False:
             pass
         
-        
         else:
+
+            # Model from lmfit package
             for i in range(len(self.data)):
                 peak = self.data[i,:]
                 mod = GaussianModel()
@@ -35,13 +28,11 @@ class Gauss:
                 out = mod.fit(peak, pars, x = p.x)
                 gaussResult = out.best_fit
 
-                # stacking Gaussians
-                #if i == 0:
+                # stacking Gaussians for each slice
                 self.gaussResults.append(gaussResult)
-                #else:
-                #    self.gaussResults = np.vstack((self.gaussResults,gaussResult))
 
-                self.sigmas.append(out.params['sigma'].value)
+                # sigma squared value
+                self.sigmas.append(out.params['sigma'].value **2 )
                 
         self.gaussResults = np.array(self.gaussResults)
         
@@ -52,10 +43,6 @@ class Gauss:
         return self.sigmas
         
     def Added_Gaussian(self):
-        #if self.n == 1:
-        #    GaussAdd = self.gaussResults
-            
-        #else:
         GaussAdd = []
         for o in range(len(self.gaussResults[0])):
             GaussAdd = np.append(GaussAdd, 0)
