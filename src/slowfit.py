@@ -57,6 +57,9 @@ class Slow_Fit:
         # shift spectrum
         self.lpfn = self.spec - min(self.spec)
         
+        for i in range(100):
+            self.lpfn[i] = self.lpfn[100]
+
         # calculate noise
         self.noise = np.array([self.lowpassdata-self.spec]).T
         
@@ -80,37 +83,62 @@ class Slow_Fit:
         self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
         
         slicepos = fn.SlicingPoints()                   # Used to find minima
+        '''
+        if True:
+
+            self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
         
-        '''self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
+            plt.plot(photE, self.Gaussian, label="Gaussian approximation")
         
-        plt.plot(photE, self.Gaussian, label="Gaussian approximation")
-        
-        for i in range(self.IndivGauss.shape[0]):
-            plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="indiv gaussian")
-        plt.plot(photE, self.lpfn, label = "shifted lowpass function")
-        plt.plot(photE, lowpassdata, label = "original function")
+            #for i in range(self.IndivGauss.shape[0]):
+             #   plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="Indiv gaussian")
+            plt.plot(photE, self.lpfn, label = "Shifted lowpass function")
+            #plt.plot(photE, lowpassdata, label = "Raw data")
         
         
-        plt.plot(self.fn2.GetMax_x(),self.fn2.GetMax_y(), 'go')
-        if self.n != 1:
-            plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
-        plt.legend()
-        plt.show()'''
-        
+            plt.plot(self.fn2.GetMax_x(),self.fn2.GetMax_y(), 'go')
+            if self.n != 1:
+                plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
+            plt.legend()
+            plt.show()
+        '''
         # Checking for significant overlap, definded by p.threshold
         minima = slicepos
         self.u = 0
-        for i in range(len(minima)):
-            index = int(minima[i])
-            if (abs(self.Gaussian[index]-self.lpfn[index])*100/max(self.lpfn)) > p.threshold and self.u == 0:
-                self.u = self.u + 1
+        sig = self.fn1.sigmas
+        ampl = self.fn1.ampl()
+        center = self.fn1.center()
+        if True:
+
+            for i in range(len(minima)):
+                index = int(minima[i])
+                diff = self.Gaussian[index]-self.lpfn[index]
+                if (abs(diff)*100/max(self.lpfn)) > p.threshold and self.u == 0:
+
+                    G1 = self.IndivGauss[i]
+                    G2 = self.IndivGauss[i+1]
+                    sig1 = sig[i]
+                    sig2 = sig[i + 1]
+                    #slicepos = minima
+                    if self.u == 0:
+                        self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl, center])
+                    else:
+                        array = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl, center])
+                        self.arr = np.vstack((arr, array))
+
+                    self.u = self.u + 1
+                #self.ind = np.append(self.ind, i+1)
         
         # getting sigmas squared, taking the root mean
-        sig = self.fn1.sigmas
+        #sig = self.fn1.sigmas
         self.sig = np.array(np.sqrt((np.average(sig))))
         
     def U(self):
         return self.u
+    def Arr(self):
+        return self.arr
+   # def Ind(self):
+        #return self.ind
     def lpfn(self):
         return self.lpfn
     def gauss(self):
