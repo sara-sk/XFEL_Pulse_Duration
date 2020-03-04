@@ -18,8 +18,10 @@ class Overlap_Fit:
             sig2 = overlaps[5]
             self.sig2 = np.sqrt(sig2)
             self.slicepos = int(overlaps[6])
-            self.ampl = overlaps[7]
-            self.center = overlaps[8]
+            self.ampl1 = overlaps[7]
+            self.ampl2 = overlaps[8]
+            self.center1 = overlaps[9]
+            self.center2 = overlaps[10]
 
             #print(self.n)
             counter = 0
@@ -32,15 +34,15 @@ class Overlap_Fit:
 
                 self.sig1 = self.sig1*incr
                 self.sig2 = self.sig2*incr
-                self.ampl[0] = self.ampl[0]*incr
-                self.ampl[1] = self.ampl[1] * incr
+                self.ampl1 = self.ampl1*incr
+                self.ampl2 = self.ampl2 * incr
                 gnew = []
                 for i in range(len(photE)):
-                    G1 = (self.ampl[0] / (self.sig1 * np.sqrt(2*np.pi))) * np.exp(-(i-self.center[0])**2/(2 * self.sig1 **2))
-                    G2 = (self.ampl[1] / (self.sig2 * np.sqrt(2*np.pi))) * np.exp(-(i-self.center[1])**2/(2 * self.sig2 **2))
+                    G1 = (self.ampl1 / (self.sig1 * np.sqrt(2*np.pi))) * np.exp(-(i-self.center1)**2/(2 * self.sig1 **2))
+                    G2 = (self.ampl2 / (self.sig2 * np.sqrt(2*np.pi))) * np.exp(-(i-self.center2)**2/(2 * self.sig2 **2))
                     add = G1 + G2
                     gnew.append(add)
-                newmin = int(np.where(min(gnew[int(self.center[0]):int(self.center[1])]) == gnew)[0])
+                newmin = int(np.where(min(gnew[int(self.center1):int(self.center2)]) == gnew)[0])
             #print(newmin)
 
                 if counter == 0:
@@ -79,15 +81,69 @@ class Overlap_Fit:
                 else:
                     gaussians = np.vstack((gaussians, overlaps[i,1]))
 
-                centers.append(overlaps[i,8][0])
-                sigmas.append(np.sqrt(overlaps[i,4]))
-                amplitudes.append(overlaps[i,7][0])
+                centers.append(overlaps[i,9])
+                sigmas.append(overlaps[i,4])
+                amplitudes.append(overlaps[i,7])
 
                 if i == len(overlaps)-1:
                     gaussians = np.vstack((gaussians, overlaps[i,2]))
-                    amplitudes.append(overlaps[i,7][1])
-                    sigmas.append(np.sqrt(overlaps[i,5]))
-                    centers.append(overlaps[i,8][1])
+                    amplitudes.append(overlaps[i,8])
+                    sigmas.append(overlaps[i,5])
+                    centers.append(overlaps[i,10])
+
+            avgdiff = abs(np.average(differences))
+
+            sigmas = np.asarray(sigmas)
+            amplitudes = np.asarray(amplitudes)
+            centers = np.asarray(centers)
+            print(amplitudes)
+
+            '''            for i in range(len(overlaps)-1):
+                weighted_diff1 = differences[i] / avgdiff
+                weighted_diff2 = differences[i] + differences[i + 1] / (avgdiff * 2)
+                weighted_diff3 = differences[i + 1] / avgdiff
+
+                if weighted_diff1 > 0:
+                    incr1 = 0.99 * weighted_diff1
+                else:
+                    incr1 = 1.01 * weighted_diff1
+
+                if weighted_diff2 > 0:
+                    incr2 = 0.99 * weighted_diff2
+                else:
+                    incr2 = 0.99 * weighted_diff2
+
+                if weighted_diff3 > 0:
+                    incr3 = 0.99 * weighted_diff3
+                else:
+                    incr3 = 1.01 * weighted_diff3
+
+                if i == 0:
+                    sigmas[i] = sigmas[i] * incr1
+                    amplitudes[i] = amplitudes[i] * incr1
+
+                if i == len(overlaps)-1:
+                    sigmas[i + 2] = sigmas[i + 2] * incr3
+                    amplitudes[i+2] = amplitudes[i+2] * incr3
+
+                sigmas[i + 1] = sigmas[i + 1] * incr2
+                amplitudes[i + 1] = amplitudes[i + 1] * incr2
+            '''
+            for i in range(self.n):
+                gnew = []
+                for j in range(len(photE)):
+                    g = (amplitudes[i] / (sigmas[i] * np.sqrt(2*np.pi))) * np.exp(-(j-centers[i])**2/(2 * sigmas[i]))
+                    gnew.append(g)
+                plt.plot(photE, gnew)
+                if i == 0:
+                    gold = gnew
+                else:
+                    gold = np.add(gold, gnew)
+
+            plt.plot(photE, gold)
+            #plt.plot(photE, self.lpfn)
+            plt.show()
+
 
 
 
