@@ -12,6 +12,8 @@ class Gauss:
     def __init__(self, data, n):
         self.data = data        # stacked individual slices
         self.sigmas = []
+        self.amplitudes = []
+        self.centers = []
         self.n = n              # number of peaks
         self.gaussResults = []
         
@@ -33,14 +35,20 @@ class Gauss:
 
                 # sigma squared value
                 self.sigmas.append(out.params['sigma'].value **2 )
+                self.amplitudes.append(out.params['amplitude'].value)
+                self.centers.append(out.params['center'].value)
                 
         self.gaussResults = np.array(self.gaussResults)
         
     def IndivGaussians(self):
         return self.gaussResults
-        
+    
     def sigmas(self):
         return self.sigmas
+    def ampl(self):
+        return self.amplitudes
+    def center(self):
+        return self.centers
         
     def Added_Gaussian(self):
         GaussAdd = []
