@@ -55,13 +55,20 @@ class Overlap_Fit:
                     break
             #print(counter)
 
-            plt.plot(photE,gnew, label="new one")
-            plt.plot(photE, np.add(self.g1,self.g2))
-            plt.plot(photE,self.lpfn)
-            plt.plot(photE[self.slicepos], self.lpfn[self.slicepos], 'ro')
-            plt.plot(photE[newmin],gnew[newmin],'go')
+            print("New Overlapping Spectrum")
+            print("Number of peaks:",self.n)
+            print("Old sigmas:", np.sqrt(sig1), np.sqrt(sig2))
+            print("New sigmas:", self.sig1, self.sig2)
+
+            plt.plot(photE,gnew, label="Adjusted added Gaussian")
+            plt.plot(photE, np.add(self.g1,self.g2), ':',label = "Original Gaussian")
+            plt.plot(photE,self.lpfn, label = "Lowpass function")
+            #plt.plot(photE[self.slicepos], self.lpfn[self.slicepos], 'ro')
+            #plt.plot(photE[newmin],gnew[newmin],'go')
             plt.legend()
             plt.show()
+
+            self.sigmas = np.array(self.sig1, self.sig2)
 
         else:
             self.lpfn = overlaps[0,3]
@@ -94,10 +101,16 @@ class Overlap_Fit:
                     centers.append(overlaps[i,10])
 
             avgdiff = abs(np.average(differences))
-
+            oldsig = np.asarray(sigmas)
             sigmas = np.asarray(sigmas)
             amplitudes = np.asarray(amplitudes)
             centers = np.asarray(centers)
+
+            #oldsig = sigmas
+            #print(oldsig)
+            added_old_gauss = gaussians[0]
+            for i in range(1,len(gaussians)):
+                added_old_gauss = np.add(added_old_gauss, gaussians[i])
             #print(amplitudes)
             ''' 
             for i in range(len(overlaps)-1):
@@ -155,16 +168,16 @@ class Overlap_Fit:
                         #g = (amplitudes[i] / (sigmas[i] * np.sqrt(2*np.pi))) * np.exp(-(j-centers[i])**2/(2 * sigmas[i]**2))
                         g = (amplitudes[i] / (sigmas[i] * np.sqrt(2*np.pi))) * np.exp(-(j-centers[i])**2/(2 * sigmas[i] **2))
                         gnew.append(g)
-                    plt.plot(photE, gnew)
+                    #plt.plot(photE, gnew)
                     if i == 0:
-                        gold = gnew
+                        self.gold = gnew
                     else:
-                        gold = np.add(gold, gnew)
+                        self.gold = np.add(self.gold, gnew)
                 for i in range(self.n - 1):
                     #print(slicepos)
-                    Minim = (int(np.where(min(gold[int(centers[i]):int(centers[i + 1])]) == gold)[0]))
+                    Minim = (int(np.where(min(self.gold[int(centers[i]):int(centers[i + 1])]) == self.gold)[0]))
                     Min.append(Minim)
-                    diff = abs(gold[Minim] - self.lpfn[int(slicepos[i])])
+                    diff = abs(self.gold[Minim] - self.lpfn[int(slicepos[i])])
                     diffs.append(diff)
                 if counter == 0:
                     old_avgdiff = np.average(diffs) + 1
@@ -172,19 +185,29 @@ class Overlap_Fit:
                 else:
                     old_avgdiff = avgdiff
                 avgdiff = np.average(diffs)
-                print(avgdiff)
+                #print(avgdiff)
                 if avgdiff > old_avgdiff:
                     break
 
+            print("New Overlapping Spectrum")
+            print("Number of peaks:", self.n)
+            print("Old sigmas:", oldsig)
+            print("New sigmas:", sigmas)
 
-                plt.plot(photE, gold)
-                plt.plot(photE, self.lpfn)
-                for i in range(len(slicepos)):
-                    plt.plot(photE[int(slicepos[i])], self.lpfn[int(slicepos[i])], 'ro')
-                    plt.plot(photE[Min[i]],gold[Min[i]],'go')
-                plt.show()
+            plt.plot(photE, self.gold, label = "Adjusted Gaussian")
+            plt.plot(photE, self.lpfn, label = "Lowpass function")
+            plt.plot(photE, added_old_gauss, ':', label = "Old Gaussian")
+            plt.legend()
+                #for i in range(len(slicepos)):
+                    #plt.plot(photE[int(slicepos[i])], self.lpfn[int(slicepos[i])], 'ro')
+                    #plt.plot(photE[Min[i]],self.gold[Min[i]],'go')
+            plt.show()
 
-
-
+            self.sigmas = sigmas
 
         return None
+
+    def Get_Overlap_Fit(self):
+        return self.gold
+    def Get_New_Sigma(self):
+        return np.sqrt(np.average(np.square(self.sigmas)))
