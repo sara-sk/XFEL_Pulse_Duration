@@ -54,6 +54,7 @@ class Overlap_Fit:
                 if counter == 0:
                     old_diff = abs(gnew[newmin] - self.lpfn[self.slicepos]) + 1
                     old_r2 = np.sum((self.lpfn - gnew))
+                    gold = gnew
                     counter = counter + 1
                 else: 
                     old_diff = diff
@@ -86,8 +87,8 @@ class Overlap_Fit:
 
             self.diff = old_diff/max(self.lpfn)
             #self.r2old = np.sum((self.lpfn - added_old_gauss)**2)
-            self.r2new = float(r2)
-            self.f2old = float(old_r2)
+            self.r2old = np.sum((self.lpfn - gold)**2)
+            self.r2new = np.sum((self.lpfn - gnew)**2)
 
         else:
             #print("2")

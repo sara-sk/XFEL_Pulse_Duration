@@ -5,7 +5,7 @@ class Parameters:
 Parameters.heightcut = 10 # percentage height of max a peak must be
 Parameters.prominence = 10 # percentage prominence required for peak
 Parameters.nn_distance = 5
-Parameters.alpha = 1.5
+Parameters.alpha = 1.2
 Parameters.beta = 1.5
 
 Parameters.x = None

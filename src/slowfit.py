@@ -74,6 +74,9 @@ class Slow_Fit:
         plt.legend()
         plt.show()
         '''
+        plt.plot(self.lpfn)
+        plt.plot(self.lowpassdata)
+        plt.show()
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral.
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         
@@ -83,22 +86,26 @@ class Slow_Fit:
         # Number of peaks, after filtering.
         self.n = len(self.filteredpeaks)
         
-        fn = Slice(self.lpfn,self.filteredpeaks, self.n)
-        
-        # Slice into individual peak functions, sprectrum == 0 outside individual slice
-        self.slices = fn.slices()
-        
-        # Approximate each slice with Gaussian functions
-        self.fn1 = Gauss(self.slices, self.n)
-        self.Gaussian = self.fn1.Added_Gaussian()       # Return added Gaussian
-        self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
-        
-        slicepos = fn.SlicingPoints()                   # Used to find minima
-        
-        if True:
+        if self.n == 0:
+            self.getnumber = 0
+        else:
 
-            self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
-            ''' 
+            fn = Slice(self.lpfn,self.filteredpeaks, self.n)
+        
+            # Slice into individual peak functions, sprectrum == 0 outside individual slice
+            self.slices = fn.slices()
+        
+            # Approximate each slice with Gaussian functions
+            self.fn1 = Gauss(self.slices, self.n)
+            self.Gaussian = self.fn1.Added_Gaussian()       # Return added Gaussian
+            self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
+        
+            slicepos = fn.SlicingPoints()                   # Used to find minima
+        
+            if True:
+
+                self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
+                ''' 
             plt.plot(photE, self.Gaussian, label="Summed Gaussian")
         
             for i in range(self.IndivGauss.shape[0]):
@@ -115,48 +122,53 @@ class Slow_Fit:
             plt.ylabel('Intensity')
             plt.legend()
             plt.show()
-            '''
-        # Checking for significant overlap, definded by p.threshold
-        minima = slicepos
-        self.u = 0
-        sig = self.fn1.sigmas
-        ampl = self.fn1.ampl()
-        center = self.fn1.center()
-        a = 0
-        if True:
+                '''
+            # Checking for significant overlap, definded by p.threshold
+            minima = slicepos
+            self.u = 0
+            sig = self.fn1.sigmas
+            ampl = self.fn1.ampl()
+            center = self.fn1.center()
+            a = 0
+            if True:
 
-            for i in range(len(minima)):
-                index = int(minima[i])
-                diff = self.Gaussian[index]-self.lpfn[index]
-                if (abs(diff)*100/max(self.lpfn)) > p.threshold and self.u == 0:
-                    a = 1
-                else:
-                    pass
-            if a > 0:
                 for i in range(len(minima)):
-
-                    G1 = self.IndivGauss[i]
-                    G2 = self.IndivGauss[i+1]
-                    sig1 = sig[i]
-                    sig2 = sig[i + 1]
-                    ampl1 = ampl[i]
-                    ampl2 = ampl[i + 1]
-                    center1 = center[i]
-                    center2 = center[i + 1]
-                    #slicepos = minima
-                    if self.u == 0:
-                        self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
+                    index = int(minima[i])
+                    diff = self.Gaussian[index]-self.lpfn[index]
+                    if (abs(diff)*100/max(self.lpfn)) > p.threshold and self.u == 0:
+                        a = 1
                     else:
-                        array = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
-                        self.arr = np.vstack((self.arr, array))
+                        pass
+                if a > 0:
+                    for i in range(len(minima)):
 
-                    self.u = self.u + 1
-                #self.ind = np.append(self.ind, i+1)
+                        G1 = self.IndivGauss[i]
+                        G2 = self.IndivGauss[i+1]
+                        sig1 = sig[i]
+                        sig2 = sig[i + 1]
+                        ampl1 = ampl[i]
+                        ampl2 = ampl[i + 1]
+                        center1 = center[i]
+                        center2 = center[i + 1]
+                        #slicepos = minima
+                        if self.u == 0:
+                            self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
+                        else:
+                            array = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
+                            self.arr = np.vstack((self.arr, array))
+
+                        self.u = self.u + 1
+                    #self.ind = np.append(self.ind, i+1)
         
-        # getting sigmas squared, taking the root mean
-        #sig = self.fn1.sigmas
-        self.sig = np.array(np.sqrt((np.average(sig))))
-        self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
+            # getting sigmas squared, taking the root mean
+            #sig = self.fn1.sigmas
+            self.sig = np.array(np.sqrt((np.average(sig))))
+            self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
+
+            self.getnumber = 1
+
+    def getnumber(self):
+        return self.getnumber
     def U(self):
         return self.u
     def Arr(self):
