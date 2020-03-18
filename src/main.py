@@ -29,7 +29,7 @@ class Main:
         diffs = []
         r2old = []
         r2new = []
-
+        overlap_times = []
         for i in range(len(intense[:,1])):
 
             # Data taken through slow fit. Returns lowpassfunctions, individual Gaussians, number of peaks and
@@ -38,12 +38,17 @@ class Main:
             #print(fn.U)
             #print(fn.U())
             if fn.U() > 0:
+                t1 = time.time()
                 function = Overlap_Fit(fn.Arr(), photE, fn.nofpeaks())
+                t2 = time.time()
+                overlap_times.append(t2-t1)
                 a = a + 1
                 replacement = function.Get_New_Sigma()
                 diffs.append(function.diff)
                 r2old.append(function.r2old)
                 r2new.append(function.r2new)
+            else:
+                r2new.append(fn.r2)
 
             # Initiate datasets for all data we want to extract from the slow fit
             if i == 0:
@@ -69,7 +74,7 @@ class Main:
 
         end = time.time() # end timer
         t = (end-start)/60
-        inputs = np.array([a, diffs, r2old, r2new, t])
+        inputs = np.array([a, diffs, r2old, r2new, t, overlap_times, r2new])
 
         Model_Analysis(inputs)
 

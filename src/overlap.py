@@ -8,7 +8,7 @@ class Overlap_Fit:
         # Works only for one overlap
         self.n = int(n)
         if self.n == 2:
-            
+            #print("1")
             self.diff = overlaps[0]
             self.g1 = overlaps[1]
             self.g2 = overlaps[2]
@@ -86,9 +86,11 @@ class Overlap_Fit:
 
             self.diff = old_diff/max(self.lpfn)
             #self.r2old = np.sum((self.lpfn - added_old_gauss)**2)
-            self.r2new = r2
+            self.r2new = float(r2)
+            self.f2old = float(old_r2)
 
         else:
+            #print("2")
             self.lpfn = overlaps[0,3]
             #self.slicepos = overlaps[0,6]
 
@@ -235,7 +237,7 @@ class Overlap_Fit:
             self.diff = avgdiff/max(self.lpfn)
 
             self.r2old = np.sum((self.lpfn - added_old_gauss)**2)
-            self.r2new = float(np.sum((self.lpfn - self.gold)**2))
+            self.r2new = np.sum((self.lpfn - self.gold)**2)
 
         return None
 

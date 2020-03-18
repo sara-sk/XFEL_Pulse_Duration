@@ -11,7 +11,10 @@ class Model_Analysis:
         time = inputs[4]
         r2old = inputs[2]
         r2new = inputs[3]
-        #print(type(r2old), r2old)
+        overlap_times = inputs[5]
+        r2s = inputs[6]
+        avg_overlap_time = np.average(overlap_times)
+        print(type(r2old), r2old)
         a = 0
         print("time taken in minutes", time)
         for i in range(len(diffs)):
@@ -20,9 +23,6 @@ class Model_Analysis:
         #print(diffs)
         #print(p.threshold)
         print("Number of peaks still not under threshold:", a)
-        #print("percentage:", a*100/nofoverlaps)
-
-        ''' for i in range(len(r2new)):
-            plt.plot(i,r2old[i],'go')
-            plt.plot(i,r2new[i],'ro')
-        plt.show()'''
+        print("percentage:", a*100/nofoverlaps)
+        print("Average overlap time:", avg_overlap_time, "seconds")
+        print("Average r2 value:", np.average(r2s))
