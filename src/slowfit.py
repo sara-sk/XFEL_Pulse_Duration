@@ -30,10 +30,14 @@ class Slow_Fit:
             self.spec = signal.filtfilt(b, a, self.lowpassdata)
                                   
             # Visual module for checking
-            """plt.plot(self.lpfn, label='lowpass')
-            plt.plot(self.lowpassdata, label='raw data')
-            plt.legend()
-            plt.show()"""
+            #plt.plot(photE,self.spec, label='Lowpass function')
+            #plt.plot(photE,self.lowpassdata, label='Raw data')
+            #plt.title("Typical XFEL energy spectru")
+            #plt.xlabel("Energy (eV)")
+            #plt.ylabel("Intensity (arbitrary)")
+            #plt.legend()
+            #plt.show()
+            
 
             # condition for good fitting based on vertical distance between maxima of raw and lowpass dataset
             # if not fitted within backloop_condition, increment until good fit
@@ -51,18 +55,25 @@ class Slow_Fit:
                 lpcutoff = lpcutoff + 0.001            # increment arbitrarily chosen
             else:
                 break
-                
-        
+                 
         
         # shift spectrum
         self.lpfn = self.spec - min(self.spec)
         
-        for i in range(100):
-            self.lpfn[i] = self.lpfn[100]
+        #for i in range(100):
+            #self.lpfn[i] = 0.1 *  self.lpfn[100]
 
         # calculate noise
         self.noise = np.array([self.lowpassdata-self.spec]).T
-        
+        '''
+        plt.plot(photE, self.lpfn, label = 'Smoothened data (shifted)')
+        plt.plot(photE, self.lowpassdata, label = 'Raw data')
+        plt.plot(photE, self.noise, label = 'Noise')
+        plt.xlabel('Energy (eV)')
+        plt.ylabel('Intensity (arbitrary)')
+        plt.legend()
+        plt.show()
+        '''
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral.
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         
@@ -83,48 +94,61 @@ class Slow_Fit:
         self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
         
         slicepos = fn.SlicingPoints()                   # Used to find minima
-        '''
+        
         if True:
 
             self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
+            ''' 
+            plt.plot(photE, self.Gaussian, label="Summed Gaussian")
         
-            plt.plot(photE, self.Gaussian, label="Gaussian approximation")
-        
-            #for i in range(self.IndivGauss.shape[0]):
-             #   plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="Indiv gaussian")
-            plt.plot(photE, self.lpfn, label = "Shifted lowpass function")
+            for i in range(self.IndivGauss.shape[0]):
+                plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="Single gaussian")
+            plt.plot(photE, self.lpfn, label = "Shifted smoothened spectrum")
+            plt.plot(photE, self.lowpassdata)
             #plt.plot(photE, lowpassdata, label = "Raw data")
         
         
             plt.plot(self.fn2.GetMax_x(),self.fn2.GetMax_y(), 'go')
             if self.n != 1:
                 plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
+            plt.xlabel('Energy (eV)')
+            plt.ylabel('Intensity')
             plt.legend()
             plt.show()
-        '''
+            '''
         # Checking for significant overlap, definded by p.threshold
         minima = slicepos
         self.u = 0
         sig = self.fn1.sigmas
         ampl = self.fn1.ampl()
         center = self.fn1.center()
+        a = 0
         if True:
 
             for i in range(len(minima)):
                 index = int(minima[i])
                 diff = self.Gaussian[index]-self.lpfn[index]
                 if (abs(diff)*100/max(self.lpfn)) > p.threshold and self.u == 0:
+                    a = 1
+                else:
+                    pass
+            if a > 0:
+                for i in range(len(minima)):
 
                     G1 = self.IndivGauss[i]
                     G2 = self.IndivGauss[i+1]
                     sig1 = sig[i]
                     sig2 = sig[i + 1]
+                    ampl1 = ampl[i]
+                    ampl2 = ampl[i + 1]
+                    center1 = center[i]
+                    center2 = center[i + 1]
                     #slicepos = minima
                     if self.u == 0:
-                        self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl, center])
+                        self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
                     else:
-                        array = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl, center])
-                        self.arr = np.vstack((arr, array))
+                        array = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
+                        self.arr = np.vstack((self.arr, array))
 
                     self.u = self.u + 1
                 #self.ind = np.append(self.ind, i+1)
@@ -132,11 +156,13 @@ class Slow_Fit:
         # getting sigmas squared, taking the root mean
         #sig = self.fn1.sigmas
         self.sig = np.array(np.sqrt((np.average(sig))))
-        
+        self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
     def U(self):
         return self.u
     def Arr(self):
         return self.arr
+    def r2(self):
+        return self.r2
    # def Ind(self):
         #return self.ind
     def lpfn(self):

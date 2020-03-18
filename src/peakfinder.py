@@ -13,7 +13,7 @@ from src.parameters import Parameters as p
 class Peakfinder:
     def __init__(self, data, photE):
         self.data = data
-        self.peaks = sp.signal.find_peaks(self.data, height = p.heightcut, prominence = p.prominence*max(self.data)/100, distance = p.nn_distance*len(photE)/100)
+        self.peaks = sp.signal.find_peaks(self.data, height = p.heightcut*max(self.data)/100, prominence = p.prominence*max(self.data)/100, distance = p.nn_distance*len(photE)/100)
         self.peaks = self.peaks[0]
         
         self.xpeaks = np.asarray(self.peaks)

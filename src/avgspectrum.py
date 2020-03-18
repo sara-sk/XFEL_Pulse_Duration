@@ -12,3 +12,4 @@ class Avg_Spectrum:
             summed = np.append(summed,np.average(data[:,i]))
         plt.plot(photE, summed, label = "Average spectrum")
         plt.legend()
+        #print(summed)
