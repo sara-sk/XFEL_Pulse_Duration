@@ -23,7 +23,7 @@ class Slow_Fit:
         # Fitting lowpass function, adjusting for both r2 value between points and for smoothness
         # Starting with ultra-low cutoff.
         lpcutoff = 0.0001
-
+        rd = 1000000000000000000000000000000
         while True:
             # fitting lowpass function
             b, a = signal.butter(p.deg, lpcutoff, 'low')
@@ -46,17 +46,22 @@ class Slow_Fit:
             # r2 value
             # parameters alpha and beta are tunable in parameter class
             r2 = (p.alpha * np.sum((self.lowpassdata - self.spec)**2) 
-                      - p.beta * np.sum((self.lowpassdata[:-1] - self.lowpassdata[1:])**2))
+                      + p.beta * np.sum((self.spec[:-1] - self.spec[1:])**2))
             # rd value
+            old_rd = rd
             rd = np.sqrt(r2 / len(photE))
-
+            #print("rd:", rd)
             # backloop condition defined in parameter class
-            if rd > p.backloop_condition_slow * max(self.lowpassdata)/100:
-                lpcutoff = lpcutoff + 0.001            # increment arbitrarily chosen
-            else:
+            
+            if rd > old_rd:
                 break
-                 
-        
+            #rd > p.backloop_condition_slow * max(self.lowpassdata)/100:
+                #lpcutoff = lpcutoff + 0.001            # increment arbitrarily chosen
+            else:
+                #break
+                lpcutoff = lpcutoff + 0.001
+        #print("Lowpassfilter rd value")         
+        #print(rd)
         # shift spectrum
         self.lpfn = self.spec - min(self.spec)
         
@@ -73,10 +78,11 @@ class Slow_Fit:
         plt.ylabel('Intensity (arbitrary)')
         plt.legend()
         plt.show()
-        '''
+        
         plt.plot(self.lpfn)
         plt.plot(self.lowpassdata)
         plt.show()
+        '''
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral.
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         

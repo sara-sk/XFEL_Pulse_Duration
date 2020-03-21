@@ -69,7 +69,7 @@ class Overlap_Fit:
                         break 
             #print(r2)
             #print(counter)
-            '''
+            
             print("New Overlapping Spectrum")
             print("Number of peaks:",self.n)
             print("Old sigmas:", np.sqrt(sig1), np.sqrt(sig2))
@@ -78,11 +78,11 @@ class Overlap_Fit:
             plt.plot(photE,gnew, label="Adjusted added Gaussian")
             plt.plot(photE, np.add(self.g1,self.g2), ':',label = "Original Gaussian")
             plt.plot(photE,self.lpfn, label = "Lowpass function")
-            #plt.plot(photE[self.slicepos], self.lpfn[self.slicepos], 'ro')
-            #plt.plot(photE[newmin],gnew[newmin],'go')
+            plt.plot(photE[self.slicepos], self.lpfn[self.slicepos], 'ro')
+            plt.plot(photE[newmin],gnew[newmin],'go')
             plt.legend()
             plt.show()
-            '''
+            
             self.sigmas = np.array(self.sig1, self.sig2)
 
             self.diff = old_diff/max(self.lpfn)
@@ -175,21 +175,69 @@ class Overlap_Fit:
             while True:
                 diffs = []
                 Min = []
-                for i in range(len(overlaps)-1):
+                adj = 2
+                for i in range(len(overlaps)+1):
                     #factor = abs(differences[i]/diffsum)
+                    '''
                     if differences[i] > 0:
+                        if adj == 1:
+                            incr2 = 0.95
+                        else:
+                            incr2 = 0.99
                         incr = 0.99 #* factor
+                        adj = 0
                     else:
                         incr = 1.01 #* factor
+                        if adj == 0:
+                            incr2 = 1.05
+                        else:
+                            incr2 = 1.01
+                        adj = 1
                     sigmas[i] = sigmas[i] * incr #* factor
                     amplitudes[i] = amplitudes[i] * incr #* factor
-                    sigmas[i+1] = sigmas[i+1] * incr #* factor
-                    amplitudes[i + 1] = amplitudes[i + 1] *incr #* factor
+                    sigmas[i+1] = sigmas[i+1] * incr2 #* factor
+                    amplitudes[i + 1] = amplitudes[i + 1] *incr2 #* factor
+                    
+                   # if i == len(overlaps) - 1:
+                        #sigmas[i + 1] = sigmas[i + 1] * incr 
+                        #amplitudes[i + 1] = amplitudes[i + 1] * incr
                     '''
-                    if i == len(overlaps) - 1:
-                        sigmas[i + 1] = sigmas[i + 1] * incr 
-                        amplitudes[i + 1] = amplitudes[i + 1] * incr
-                    '''
+
+                    if i == 0:
+                        if differences[i] > 0:
+                            incr = 0.99
+                        else:
+                            incr = 1.01
+                        sigmas[i] = sigmas[i] * incr
+                        amplitudes[i] = amplitudes[i] * incr
+
+                    elif i == len(overlaps):
+                        if differences[i-1] > 0:
+                            incr = 0.99
+                        else:
+                            incr = 1.01
+                        sigmas[i] = sigmas[i] * incr
+                        amplitudes[i] = amplitudes[i] * incr
+
+                    else:
+                        d1 = differences[i-1]
+                        d2 = differences[i]
+                        if d1 > 0 and d2 > 0:
+                            incr = 0.99
+                        elif d2 < 0 and d2 < 0:
+                            incr = 1.01
+                        else:
+                            d = d1 + d2
+                            dabs = abs(d2) + abs(d1)
+                            if d > 0:
+                                incr = 1. - 0.01*d/dabs
+                            else:
+                                incr = 1. + 0.01*d/dabs
+                        sigmas[i] = sigmas[i]*incr
+                        amplitudes[i] = amplitudes[i] * incr
+
+
+
                 for i in range(self.n):
                     #print(amplitudes[i],sigmas[i])
                     gnew = []
@@ -219,7 +267,7 @@ class Overlap_Fit:
                 #print(avgdiff)
                 if avgdiff > old_avgdiff:
                     break
-            '''
+            
             print("New Overlapping Spectrum")
             print("Number of peaks:", self.n)
             print("Old sigmas:", oldsig)
@@ -229,11 +277,11 @@ class Overlap_Fit:
             plt.plot(photE, self.lpfn, label = "Lowpass function")
             plt.plot(photE, added_old_gauss, ':', label = "Old Gaussian")
             plt.legend()
-                #for i in range(len(slicepos)):
-                    #plt.plot(photE[int(slicepos[i])], self.lpfn[int(slicepos[i])], 'ro')
-                    #plt.plot(photE[Min[i]],self.gold[Min[i]],'go')
+            for i in range(len(slicepos)):
+                plt.plot(photE[int(slicepos[i])], self.lpfn[int(slicepos[i])], 'ro')
+                plt.plot(photE[Min[i]],self.gold[Min[i]],'go')
             plt.show()
-            '''
+            
             self.sigmas = sigmas
             self.diff = avgdiff/max(self.lpfn)
 
