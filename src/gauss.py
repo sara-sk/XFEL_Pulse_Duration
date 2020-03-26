@@ -39,7 +39,8 @@ class Gauss:
                 self.centers.append(out.params['center'].value)
                 
         self.gaussResults = np.array(self.gaussResults)
-        
+        self.centers = np.array(self.centers)
+        self.amplitudes = np.array(self.amplitudes)
     def IndivGaussians(self):
         return self.gaussResults
     

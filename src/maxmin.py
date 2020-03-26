@@ -25,24 +25,31 @@ class MaxMin:
                 ind2 = int(self.slicepos[j])
                 ymin = self.lpfn[ind2]
                 self.ymin = np.append(self.ymin, ymin)
-
                 xmin = photE[self.slicepos[j]]
                 self.xmin = np.append(self.xmin, xmin)
             
             # Find local maxima between local minima (in Gaussian), matching to lowpass function
             self.ymax = []
             self.xmax = []
+            '''
+            plt.plot(self.lpfn)
+            plt.show()
+            '''
 
             # Define indices differently for edge peaks
             for i in range(self.n):
                 if i == 0:
-                    i1 = int(0)
                     i2 = int(len(self.lpfn)) if self.n == 1 else int(self.slicepos[i])
+                    i1 = int(0)
                     #print('Finding first minmax within {},{}'.format(i1, i2))
                     ymax = max(self.lpfn[i1:i2])
                     xmax = np.where(self.lpfn == ymax)
-
                     ind1 = int(xmax[0])
+                    if ind1 == 0:
+                        i1 = int(0.3 * i2)
+                        ymax = max(self.lpfn[i1:i2])
+                        xmax = np.where(self.lpfn == ymax)
+                        ind1 = int(xmax[0])
                     xmax = photE[ind1]
                     self.ymax = np.append(self.ymax, ymax)
                     self.xmax = np.append(self.xmax, xmax)
