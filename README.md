@@ -1,10 +1,6 @@
 # XFEL_Pulse_Duration
-Repository contains code in progress as part of a project to determine the average pulse duration of FEL beams.
+Repository contains code as part of a project to determine the average pulse duration of FEL beams. This is done using the spectral method, where spike widths are determinded from the frequency domain, and extended to the temporal domain via a Fourier transform.
 <br> <br> 
-Visual_interface_master allows for quick data analysis given any set of spectral data in h5 format. <br>
-All source code in src, data in data folder for each branch. <br>
---> Master branch aimed for final usage. <br>
---> Fast and slow fit contains old version where running of the main code was split into a fast and a slow component.<br>
---> Median filter and moving average branches contain source code using a different initial filter, as opposed to the lowpass filter used in master and other branches. <br>
---> Notebooks worth saving contain results from previous model analysis. <br>
---> Visual demonstration demonstrates the entire master branch code visually, for a single spectrum chosen from the input dataset.
+The Master branch contains the visual interface (interface.ipynb), which is used to access the algorithm. The Notebook cell must be run to insert a file, after which buttons will appear to prompt the analysis.
+<br>
+The data on which the model is trialled is provided in the "data" folder - note however that the data must be kept in the same folder as interface.ipynb to be ablle to load.
