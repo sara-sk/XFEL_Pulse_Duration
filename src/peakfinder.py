@@ -20,15 +20,6 @@ class Peakfinder:
         self.ypeaks = np.asarray(self.data[self.xpeaks])
         self.allpeaks = np.array([self.xpeaks,self.ypeaks])
         
-        
     def peaks(self):
-    # returns dataset with neutral index x and intensity y  
-        """
-        # Visual module
-        print("Plotting peaks found. Neutrally indexed.")
-        plt.plot(self.data, label="data fed to peak finder")
-        plt.plot(self.xpeaks,self.ypeaks,label="peaks",'go')
-        plt.legend()
-        plt.show()
-        """
+    # returns dataset with neutral index x and intensity y
         return self.allpeaks

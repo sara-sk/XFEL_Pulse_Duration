@@ -1,3 +1,4 @@
+# Parameter class
 
 class Parameters:
     pass
@@ -7,8 +8,6 @@ Parameters.prominence = 10 # percentage prominence required for peak
 Parameters.nn_distance = 5
 Parameters.alpha = 1.
 Parameters.beta = 700
-
-
 Parameters.x = None
 
 # Lowpass/backloop conditions

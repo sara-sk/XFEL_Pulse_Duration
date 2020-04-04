@@ -13,7 +13,7 @@ class Peaks_and_Sigmas:
         self.avgsigma = avgsigma
         self.photE = photE
         self.intense = intense
-        self.array = array # Array to be entered with the peak numbers of interest
+        self.array = array          # Array to be entered with the peak numbers of interest
 
         avg_sigmas = []
         counts = []
@@ -48,9 +48,6 @@ class Peaks_and_Sigmas:
             weighted_avg = np.append(weighted_avg, ave)
         
         self.overall_average = np.sum(weighted_avg)
-        
-        ##iprint("Average sigma for all input spectra:", self.overall_average)
-       ## print("Number of spectra:", self.spectra)
         
     # Stacks arrays to return one dataset with all data
     def Returns(self):

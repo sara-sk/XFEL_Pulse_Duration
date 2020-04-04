@@ -15,8 +15,6 @@ from src.parameters import Parameters as p
 from src.modelanalysis import Model_Analysis
 from src.overlap import Overlap_Fit
 from src.slowfit import Slow_Fit
-from src.fastfit import Fast_Fit
-from src.fastbackloop import Fast_Backloop
 
 # Higher-level class which fits the function and calculates for each spectrum in the dataset
 # the average sigma of its peaks and the number of peaks in the spectrum.
@@ -32,15 +30,15 @@ class Main:
         overlap_times = []
         b = 0
         for i in range(len(intense[:,1])):
-            # Data taken through slow fit. Returns lowpassfunctions, individual Gaussians, number of peaks and
-            # average sigma
+            # Data taken through slow fit. Returns lowpassfunctions, individual Gaussians, number of peaks and average sigma
             fn = Slow_Fit(intense[i,:],photE)
+            
+            # detect cases of no peaks
             if fn.getnumber == 0:
                 b = b + 1
 
             else:
-                #print(fn.U)
-                #print(fn.U())
+                # record spectra with overlaps (fn.U > 0)
                 if fn.U() > 0:
                     t1 = time.time()
                     function = Overlap_Fit(fn.Arr(), photE, fn.nofpeaks())
@@ -53,8 +51,9 @@ class Main:
                     r2new.append(function.r2new)
                 else:
                     r2new.append(fn.r2)
+                    r2old.append(fn.r2)
 
-                # Initiate datasets for all data we want to extract from the slow fit
+                # Initiate datasets for all data we want to extract from the slow fit. Case of overlaps, replace sigmas
                 if i == 0:
                     lpfns = fn.lpfn
                     gaussians = fn.gauss()
@@ -69,25 +68,24 @@ class Main:
                     lpfns = np.vstack((lpfns, fn.lpfn))
                     gaussians = np.vstack((gaussians, fn.gauss()))
                     self.number_of_peaks = np.vstack((self.number_of_peaks, fn.nofpeaks()))
-                    #self.avgsigma = np.vstack((self.avgsigma, fn.avg_sigmas()))
+                    
+                    # account for overlapping spectra
                     if fn.U() > 0:
                         self.avgsigma = np.vstack((self.avgsigma, replacement))
                     else:
                         self.avgsigma = np.vstack((self.avgsigma, fn.avg_sigmas()))
-                #print("number of significantly overlapping spectra", len(overlaps))
 
         end = time.time() # end timer
         t = (end-start)/60
         inputs = np.array([a, diffs, r2old, r2new, t, overlap_times, r2new, i])
 
+        # class for analysing effectiveness of model
         Model_Analysis(inputs)
 
-        # print("Time taken for fit:", (end - start)/60, "minutes")
-
         # return number of peaks and average sigma. Average is root mean squared.
-        print("Overlaps:",a, "out of", i, "spectra")
-        print("Number of spectra without a clear peak", b)
-        #Overlap_Fit(overlaps,photE)
+
+        #print("Overlaps:",a, "out of", i, "spectra")
+        #print("Number of spectra without a clear peak", b)
     def number_of_peaks(self):
         return self.number_of_peaks
     def avgsigma(self):

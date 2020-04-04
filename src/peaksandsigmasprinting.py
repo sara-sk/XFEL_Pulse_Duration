@@ -13,7 +13,7 @@ class Peaks_and_Sigmas_Printing:
         self.avgsigma = avgsigma
         self.photE = photE
         self.intense = intense
-        self.array = array # Array to be entered with the peak numbers of interest
+        self.array = array                  # Array to be entered with the peak numbers of interest
 
         avg_sigmas = []
         counts = []

@@ -14,6 +14,7 @@ from src.peaksandsigmas import Peaks_and_Sigmas
 
 class All_Data:
     def __init__(self, intense, photE, dataset):
+        print("Processing data")
 
         # extract data from Main class
         fn = Main(intense,photE)

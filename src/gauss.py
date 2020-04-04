@@ -11,9 +11,9 @@ from src.parameters import Parameters as p
 class Gauss:
     def __init__(self, data, n):
         self.data = data        # stacked individual slices
-        self.sigmas = []
-        self.amplitudes = []
-        self.centers = []
+        self.sigmas = []        # sigmas
+        self.amplitudes = []    # amplitudes
+        self.centers = []       # indices for peak maxima
         self.n = n              # number of peaks
         self.gaussResults = []
         
@@ -37,17 +37,21 @@ class Gauss:
                 self.sigmas.append(out.params['sigma'].value **2 )
                 self.amplitudes.append(out.params['amplitude'].value)
                 self.centers.append(out.params['center'].value)
-                
+        
+        # stack for easy extraction
         self.gaussResults = np.array(self.gaussResults)
         self.centers = np.array(self.centers)
         self.amplitudes = np.array(self.amplitudes)
+
     def IndivGaussians(self):
         return self.gaussResults
     
     def sigmas(self):
         return self.sigmas
+    
     def ampl(self):
         return self.amplitudes
+    
     def center(self):
         return self.centers
         

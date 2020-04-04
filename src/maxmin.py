@@ -31,11 +31,7 @@ class MaxMin:
             # Find local maxima between local minima (in Gaussian), matching to lowpass function
             self.ymax = []
             self.xmax = []
-            '''
-            plt.plot(self.lpfn)
-            plt.show()
-            '''
-
+            
             # Define indices differently for edge peaks
             for i in range(self.n):
                 if i == 0:

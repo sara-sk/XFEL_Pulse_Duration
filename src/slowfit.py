@@ -28,16 +28,6 @@ class Slow_Fit:
             # fitting lowpass function
             b, a = signal.butter(p.deg, lpcutoff, 'low')
             self.spec = signal.filtfilt(b, a, self.lowpassdata)
-                                  
-            # Visual module for checking
-            #plt.plot(photE,self.spec, label='Lowpass function')
-            #plt.plot(photE,self.lowpassdata, label='Raw data')
-            #plt.title("Typical XFEL energy spectru")
-            #plt.xlabel("Energy (eV)")
-            #plt.ylabel("Intensity (arbitrary)")
-            #plt.legend()
-            #plt.show()
-            
 
             # condition for good fitting based on vertical distance between maxima of raw and lowpass dataset
             # if not fitted within backloop_condition, increment until good fit
@@ -50,39 +40,19 @@ class Slow_Fit:
             # rd value
             old_rd = rd
             rd = np.sqrt(r2 / len(photE))
-            #print("rd:", rd)
-            # backloop condition defined in parameter class
             
             if rd > old_rd:
                 break
-            #rd > p.backloop_condition_slow * max(self.lowpassdata)/100:
-                #lpcutoff = lpcutoff + 0.001            # increment arbitrarily chosen
             else:
-                #break
                 lpcutoff = lpcutoff + 0.001
-        #print("Lowpassfilter rd value")         
-        #print(rd)
+        
         # shift spectrum
         self.lpfn = self.spec - min(self.spec)
+        self.shiftraw = self.lowpassdata - min(self.spec)
         
-        #for i in range(100):
-            #self.lpfn[i] = 0.1 *  self.lpfn[100]
-
         # calculate noise
         self.noise = np.array([self.lowpassdata-self.spec]).T
-        '''
-        plt.plot(photE, self.lpfn, label = 'Smoothened data (shifted)')
-        plt.plot(photE, self.lowpassdata, label = 'Raw data')
-        plt.plot(photE, self.noise, label = 'Noise')
-        plt.xlabel('Energy (eV)')
-        plt.ylabel('Intensity (arbitrary)')
-        plt.legend()
-        plt.show()
         
-        plt.plot(self.lpfn)
-        plt.plot(self.lowpassdata)
-        plt.show()
-        '''
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral.
         self.peaks = Peakfinder(self.lpfn,photE).peaks
         
@@ -106,29 +76,11 @@ class Slow_Fit:
             self.Gaussian = self.fn1.Added_Gaussian()       # Return added Gaussian
             self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
         
-            slicepos = fn.SlicingPoints()                   # Used to find minima
-        
+            slicepos = fn.SlicingPoints()                   # Used to find minima 
             if True:
 
                 self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
-                ''' 
-            plt.plot(photE, self.Gaussian, label="Summed Gaussian")
-        
-            for i in range(self.IndivGauss.shape[0]):
-                plt.plot(photE, self.IndivGauss[i],'--',markersize = 0.1, label="Single gaussian")
-            plt.plot(photE, self.lpfn, label = "Shifted smoothened spectrum")
-            plt.plot(photE, self.lowpassdata)
-            #plt.plot(photE, lowpassdata, label = "Raw data")
-        
-        
-            plt.plot(self.fn2.GetMax_x(),self.fn2.GetMax_y(), 'go')
-            if self.n != 1:
-                plt.plot(self.fn2.GetMin_x(),self.fn2.GetMin_y(), 'ro')
-            plt.xlabel('Energy (eV)')
-            plt.ylabel('Intensity')
-            plt.legend()
-            plt.show()
-                '''
+                
             # Checking for significant overlap, definded by p.threshold
             minima = slicepos
             self.u = 0
@@ -156,7 +108,7 @@ class Slow_Fit:
                         ampl2 = ampl[i + 1]
                         center1 = center[i]
                         center2 = center[i + 1]
-                        #slicepos = minima
+
                         if self.u == 0:
                             self.arr = np.array([diff, G1, G2, self.lpfn, sig1, sig2, minima[i], ampl1, ampl2, center1, center2, self.n])
                         else:
@@ -164,10 +116,9 @@ class Slow_Fit:
                             self.arr = np.vstack((self.arr, array))
 
                         self.u = self.u + 1
-                    #self.ind = np.append(self.ind, i+1)
+                    
         
             # getting sigmas squared, taking the root mean
-            #sig = self.fn1.sigmas
             self.sig = np.array(np.sqrt((np.average(sig))))
             self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
 
@@ -181,8 +132,6 @@ class Slow_Fit:
         return self.arr
     def r2(self):
         return self.r2
-   # def Ind(self):
-        #return self.ind
     def lpfn(self):
         return self.lpfn
     def gauss(self):

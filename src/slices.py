@@ -37,37 +37,6 @@ class Slice:
                 index0 = self.minima_indices[0]
                 index4 = self.minima_indices[1]
 
-                # Module for cutting single peaks at twice FWHM
-                '''
-                # calculating fwhm to define indices of actual peak
-                halfMax = max(self.data)/2
-                max_x = np.where(self.data == max(self.data))
-                max_x = int(max_x[0])
-                data1 = data[0:int(max_x)]
-                data2 = data[int(max_x):len(self.data)-1]
-
-                a = abs(np.subtract(data1, halfMax))
-                indy1  = min(a)
-                indx1 = np.where(indy1 == a)[0]
-
-                b = abs(np.subtract(data2, halfMax))
-
-                indy2 = min(b)
-                ind2 = np.where(indy2 == b)[0]
-                indx2 = max_x + ind2
-
-                #print(indx1,indx2)
-
-                halfwidth = indx2 - indx1
-
-                # print(halfwidth)
-                index1 = max_x - halfwidth
-                index2 = max_x + halfwidth
-
-                #print(index1)
-
-                '''
-
                 # Module for cutting single peaks at halfway between peak max and beginning/end of spectrum
                 max_x = np.where(self.data == max(self.data))[0]
                 max_x = int(max_x)
@@ -119,13 +88,7 @@ class Slice:
                             single_slice = np.append(single_slice, 0)
                         #self.Slices = np.vstack((self.Slices,single_slice))
                         self.Slices.append(single_slice)
-                """
-                # Visual module
-                print("plotting single slices")
-                plt.plot(single_slice)
-                plt.show()
-                """
-                
+            
             self.Slices = np.array(self.Slices)
         else:
             assert nofpeaks > 0
