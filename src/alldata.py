@@ -50,8 +50,11 @@ class All_Data:
                 characters).Overall_Average()                           # rms all spike widths
         t6 = avg_spike_number
 
+        t7 = 4 * 6.582 * 10**(-16) *0.69314718056*10**(18) / t5
+        t8 = t7 * np.sqrt(2)
+
 
         fig = go.Figure(data=[go.Table(header=dict(values=['Index', 'Value']), cells=dict(values=
-            [['Dataset', '# of 1,2,.. spikes', 'single spike widths', '2-spike widths', 'overall spike widths','Average number of spikes in single spectrum'],
-                [t1, t2, t3, t4, t5, t6]]))])
+            [['Dataset', '# of 1,2,.. spikes', 'single spike widths', '2-spike widths', 'overall spike widths','Average number of spikes in single spectrum', 'tmin', 'tmax'],
+                [t1, t2, t3, t4, t5, t6,t7,t8]]))])
         fig.show()    

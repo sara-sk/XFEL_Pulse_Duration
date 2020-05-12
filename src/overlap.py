@@ -201,6 +201,10 @@ class Overlap_Fit:
                 if counter > 10:
                     if r2>old_r2*1.2:
                         break
+
+            ampl_sum = np.sum(amplitudes)
+            for i in range(len(sigmas)):
+                sigmas[i] = sigmas[i] * amplitudes[i] / ampl_sum
             
             # save data
             self.sigmas = sigmas
@@ -213,7 +217,7 @@ class Overlap_Fit:
     def Get_Overlap_Fit(self):
         return self.gold
     def Get_New_Sigma(self):
-        return np.sqrt(np.average(np.square(self.sigmas)))
+        return np.sqrt(np.average(np.square(2*self.sigmas)))
     def diff(self):
         return self.diff
     def r2old(self):

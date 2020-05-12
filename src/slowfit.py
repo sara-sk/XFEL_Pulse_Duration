@@ -55,15 +55,17 @@ class Slow_Fit:
         
         # Extracting peaks ([x-axis, y-axis]) - indexed to neutral.
         self.peaks = Peakfinder(self.lpfn,photE).peaks
-        
+         
         # Apply further constraints to peaks
         self.filteredpeaks = Filter_peaks(self.peaks).filtered_peaks()
                 
         # Number of peaks, after filtering.
         self.n = len(self.filteredpeaks)
         
+        # labelling spectra in case of no spike detected, as to skip further analysis
         if self.n == 0:
             self.getnumber = 0
+
         else:
 
             fn = Slice(self.lpfn,self.filteredpeaks, self.n)
@@ -75,10 +77,9 @@ class Slow_Fit:
             self.fn1 = Gauss(self.slices, self.n)
             self.Gaussian = self.fn1.Added_Gaussian()       # Return added Gaussian
             self.IndivGauss = self.fn1.IndivGaussians()     # Return individual Gaussians
-        
+
             slicepos = fn.SlicingPoints()                   # Used to find minima 
             if True:
-
                 self.fn2 = MaxMin(self.IndivGauss,self.n, slicepos, self.lpfn, photE)
                 
             # Checking for significant overlap, definded by p.threshold
@@ -89,7 +90,6 @@ class Slow_Fit:
             center = self.fn1.center()
             a = 0
             if True:
-
                 for i in range(len(minima)):
                     index = int(minima[i])
                     diff = self.Gaussian[index]-self.lpfn[index]
@@ -116,10 +116,15 @@ class Slow_Fit:
                             self.arr = np.vstack((self.arr, array))
 
                         self.u = self.u + 1
+
+            sum_ampl = np.sum(ampl)
                     
-        
+            for i in range(len(sig)):
+                sig[i] = sig[i] * ampl[i] / sum_ampl
+
+
             # getting sigmas squared, taking the root mean
-            self.sig = np.array(np.sqrt((np.average(sig))))
+            self.sig = np.array(np.sqrt((np.average(2*sig))))
             self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
 
             self.getnumber = 1

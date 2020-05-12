@@ -1,5 +1,6 @@
 ###############################################################
 # Class for specifying further constraint on recording of peaks
+# Can freely add more conditions if necessary
 ###############################################################
 import sys
 from src.parameters import Parameters as p
