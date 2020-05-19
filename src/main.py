@@ -29,9 +29,10 @@ class Main:
         r2new = []
         overlap_times = []
         b = 0
+        fact = len(photE)/(max(photE)-min(photE))
         for i in range(len(intense[:,1])):
             # Data taken through slow fit. Returns lowpassfunctions, individual Gaussians, number of peaks and average sigma
-            fn = Slow_Fit(intense[i,:],photE)
+            fn = Slow_Fit(intense[i,:],photE, fact)
             
             # detect cases of no peaks
             if fn.getnumber == 0:
@@ -41,7 +42,7 @@ class Main:
                 # record spectra with overlaps (fn.U > 0)
                 if fn.U() > 0:
                     t1 = time.time()
-                    function = Overlap_Fit(fn.Arr(), photE, fn.nofpeaks())
+                    function = Overlap_Fit(fn.Arr(), photE, fn.nofpeaks(), fact)
                     t2 = time.time()
                     overlap_times.append(t2-t1)
                     a = a + 1

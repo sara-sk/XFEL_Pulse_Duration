@@ -10,7 +10,7 @@ from lmfit.models import GaussianModel
 
 
 class Overlap_Fit:
-    def __init__(self, overlaps, photE, n):
+    def __init__(self, overlaps, photE, n, fact):
         self.n = int(n)
 
         # Distinguish case of 1 or multiple overlaps
@@ -181,7 +181,7 @@ class Overlap_Fit:
                 # compute new differences
                 for i in range(self.n - 1):
                     Minim = np.where(min(self.gold[int(centers[i]):int(centers[i + 1])]) == self.gold)[0]
-                    Minim = int(Minim)
+                    Minim = int(np.average(Minim))
                     Min.append(Minim)
                     diff = abs(self.gold[Minim] - self.lpfn[int(slicepos[i])])
                     diffs.append(diff)
@@ -203,11 +203,15 @@ class Overlap_Fit:
                         break
 
             ampl_sum = np.sum(amplitudes)
+            sigmas = sigmas/fact
+            
             for i in range(len(sigmas)):
                 sigmas[i] = sigmas[i] * amplitudes[i] / ampl_sum
             
+            self.averages = np.sum(sigmas)
+            
             # save data
-            self.sigmas = sigmas
+            self.sigmas = 2.355*self.averages
             self.diff = avgdiff/max(self.lpfn)
             self.r2old = np.sum((self.lpfn - added_old_gauss)**2)
             self.r2new = np.sum((self.lpfn - self.gold)**2)
@@ -217,7 +221,7 @@ class Overlap_Fit:
     def Get_Overlap_Fit(self):
         return self.gold
     def Get_New_Sigma(self):
-        return np.sqrt(np.average(np.square(2*self.sigmas)))
+        return self.sigmas
     def diff(self):
         return self.diff
     def r2old(self):

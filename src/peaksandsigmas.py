@@ -47,7 +47,7 @@ class Peaks_and_Sigmas:
             ave = weight * self.out_data[i,2]
             weighted_avg = np.append(weighted_avg, ave)
         
-        self.overall_average = np.sum(weighted_avg)
+        self.overall_average = np.average(self.avgsigma)
         
     # Stacks arrays to return one dataset with all data
     def Returns(self):

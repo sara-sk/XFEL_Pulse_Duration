@@ -17,7 +17,7 @@ from src.parameters import Parameters as p
 # Originally named slow fit because of the adaptive cutoff parameter for each spectrum.
 
 class Slow_Fit:
-    def __init__(self, lowpassdata,photE):
+    def __init__(self, lowpassdata,photE, fact):
         self.lowpassdata = lowpassdata
         
         # Fitting lowpass function, adjusting for both r2 value between points and for smoothness
@@ -118,13 +118,19 @@ class Slow_Fit:
                         self.u = self.u + 1
 
             sum_ampl = np.sum(ampl)
-                    
+            
+            sig = sig/fact
+            #print(sig)
             for i in range(len(sig)):
-                sig[i] = sig[i] * ampl[i] / sum_ampl
+                sig[i] = sig[i]*ampl[i] / sum_ampl
 
+            #print(sig)
 
+            average = np.sum(sig)
+            #print(average)
             # getting sigmas squared, taking the root mean
-            self.sig = np.array(np.sqrt((np.average(2*sig))))
+
+            self.sig = np.array(2.355*average)
             self.r2 = float(np.sum((self.lpfn - self.Gaussian)**2))
 
             self.getnumber = 1

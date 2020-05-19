@@ -34,7 +34,7 @@ class Gauss:
                 self.gaussResults.append(gaussResult)
 
                 # sigma squared value
-                self.sigmas.append(out.params['sigma'].value **2 )
+                self.sigmas.append(out.params['sigma'].value )
                 self.amplitudes.append(out.params['amplitude'].value)
                 self.centers.append(out.params['center'].value)
         
